@@ -1,7 +1,5 @@
 {
-  "name": "Speedport",
+  "name": "Telekom Devices (Speedport)",
   "render_readme": true,
-  "homeassistant": "2026.3.0",
-  "zip_release": true,
-  "filename": "speedport.zip"
+  "homeassistant": "2026.3.0"
 }

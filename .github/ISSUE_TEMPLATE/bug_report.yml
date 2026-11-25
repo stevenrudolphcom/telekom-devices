@@ -11,8 +11,8 @@ body:
         Thanks for taking the time to fill out this bug report!
 
         Before submitting, please check:
-        - 📋 [Existing issues](https://github.com/FaserF/ha-speedport/issues)
-        - 📖 [Documentation](https://github.com/FaserF/ha-speedport/blob/master/README.md)
+        - 📋 [Existing issues](https://github.com/stevenrudolphcom/telekom-devices/issues)
+        - 📖 [Documentation](https://github.com/stevenrudolphcom/telekom-devices#readme)
         - 🔧 [Integration page](https://my.home-assistant.io/redirect/integration/?domain=speedport) in Home Assistant
 
   - type: input

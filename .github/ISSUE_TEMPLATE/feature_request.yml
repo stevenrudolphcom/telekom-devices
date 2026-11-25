@@ -11,8 +11,8 @@ body:
         Thanks for taking the time to fill out this feature request!
 
         Before submitting, please check:
-        - 📋 [Existing feature requests](https://github.com/FaserF/ha-speedport/issues?q=is%3Aissue+label%3Aenhancement)
-        - 📖 [Documentation](https://github.com/FaserF/ha-speedport/blob/master/README.md)
+        - 📋 [Existing feature requests](https://github.com/stevenrudolphcom/telekom-devices/issues?q=is%3Aissue+label%3Aenhancement)
+        - 📖 [Documentation](https://github.com/stevenrudolphcom/telekom-devices#readme)
 
   - type: textarea
     id: description

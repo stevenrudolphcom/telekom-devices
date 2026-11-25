@@ -1,169 +1,120 @@
-# Telekom Speedport (for Home Assistant)
+# Telekom Devices for Home Assistant
 
-[![GitHub Release](https://img.shields.io/github/release/FaserF/ha-speedport.svg?style=flat-square)](https://github.com/FaserF/ha-speedport/releases)
-[![Downloads (Current release)](https://img.shields.io/github/downloads/FaserF/ha-speedport/latest/speedport.zip?label=Downloads%20(Current%20release)&style=flat-square)](https://github.com/FaserF/ha-speedport/releases)
-[![License](https://img.shields.io/github/license/FaserF/ha-speedport.svg?style=flat-square)](LICENSE)
-[![hacs](https://img.shields.io/badge/HACS-custom-orange.svg?style=flat-square)](https://hacs.xyz)
-[![Add to Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=speedport)
-[![CI Orchestrator](https://img.shields.io/github/actions/workflow/status/FaserF/ha-speedport/ci-orchestrator.yml?label=CI)](https://github.com/FaserF/ha-speedport/actions/workflows/ci-orchestrator.yml)
+A custom Home Assistant integration for Telekom Speedport routers, based on
+the MIT-licensed [FaserF/ha-speedport](https://github.com/FaserF/ha-speedport)
+project.
 
-A high-performance, modern Home Assistant integration for Telekom Speedport routers. Monitor your internet connection, track connected devices, manage WiFi, and control your router directly from Home Assistant.
+This fork keeps the existing Speedport integration features and adds a native
+connector for Speedport Pro Plus routers that expose the Sagemcom XMO API.
+It also includes an optional Lovelace router flyout.
 
-> [!IMPORTANT]
-> **Testing Disclaimer**: This integration is primarily developed and tested using a **Speedport W 724V**. While it is designed to be theoretically compatible with all Speedport routers using the native web API, I cannot guarantee full functionality for other models. Bug reports for other models can only be addressed with limited support as I lack the hardware for live testing.
+> This is an unofficial project and is not affiliated with Deutsche Telekom.
 
----
+## Features
 
----
+- Monitor internet, DSL, IPv4/IPv6, traffic, firmware, and connected devices.
+- Track network clients and display dynamically discovered mesh nodes.
+- Control supported Wi-Fi, WPS, reconnect, reboot, and firmware functions.
+- Generate a Wi-Fi QR code.
+- Support legacy JSON/MD5, encrypted JSON/SHA-256, and Sagemcom XMO/SHA-512
+  login flows.
+- Refresh and inspect cached raw router data through Home Assistant services.
+- Optional frontend card with router status, manual refresh, and raw XMO details.
 
-## ❤️ Support This Project
+## Supported models
 
-> I maintain this integration in my **free time alongside my regular job** — bug hunting, new features, and testing on real hardware. Test devices cost money, and every donation helps me stay independent and free up more time for open-source work.
->
-> Donations are completely voluntary — but the more support I receive, the less I depend on other income sources and the more time I can realistically invest into these GitHub projects. 💪
+The upstream model support is retained. Confirmed local XMO testing covers:
 
-<div align="center">
+- **Speedport Pro Plus**
+- Firmware `120141.6.5.021.0`
 
-[![GitHub Sponsors](https://img.shields.io/badge/Sponsor%20on-GitHub-%23EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/FaserF)&nbsp;&nbsp;
-[![PayPal](https://img.shields.io/badge/Donate%20via-PayPal-%2300457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/FaserF)
+Other Speedport models remain supported according to the upstream integration,
+but the XMO extension is not a blanket compatibility claim for every model or
+firmware.
 
-</div>
+## Install through HACS
 
----
-
-## 🔌 Recommended Hardware & Ecosystem Links
-
-| Device / Service | Integration Use Case | Link |
-| :--- | :--- | :--- |
-| **OpenWrt-kompatible Wi-Fi 6/7 Router & Gateways** | Native Ubus/RPC, WireGuard, SQM & Präsenz-Erkennung in Home Assistant | [Offizielle Geräte-Seite →](https://fabiseitz.de/go/ha-router) |
-| **Home Assistant Green / Yellow Zentrale** | Dedizierter, stromsparender 24/7 Smart-Home-Host | [Offizielle Geräte-Seite →](https://fabiseitz.de/go/ha-hardware) |
-
-
----
-## 🧭 Quick Links
-
-| | | | |
-| :--- | :--- | :--- | :--- |
-| [✨ Features](#-features) | [📦 Installation](#-installation) | [⚙️ Configuration](#-configuration) | [🛠️ Options](#-options) |
-| [🧱 Entities](#-entities) | [📶 Supported Models](#-supported-models) | [🧑‍💻 Development](#-development) | [📄 License](#-license) |
-
-### Why use this integration?
-Most Telekom Speedport routers are closed systems with limited external access. This integration uses the native web interface APIs (JSON-based) to provide real-time monitoring and control without needing any special firmware or hacks. It is designed to be stable, lightweight, and fully compatible with modern Home Assistant standards.
-
-## 📶 Supported Models
-
-| Model | Status | Notes |
-| :--- | :--- | :--- |
-| **Speedport W 724V** | ✅ **Tested** | Primary development model. |
-| **Speedport Smart 4R Typ A** | ✅ **Tested** | Confirmed working by user ([#10](https://github.com/FaserF/ha-speedport/issues/10)). |
-| **Speedport Smart 4 Typ B** | ✅ **Tested** | Confirmed working by user ([#23](https://github.com/FaserF/ha-speedport/issues/23)). |
-| Speedport Smart 1 / 2 / 3 / 4 | ⚠️ Theoretical | Should work via encrypted API, but untested. |
-| Speedport Smart 3 / 4 (other types) | ⚠️ Theoretical | Should work via encrypted/plain API, but untested. |
-| Speedport Pro / Pro Plus | ⚠️ Theoretical | Should work via encrypted API, but untested. |
-| Speedport Hybrid / Hybrid 2 | ⚠️ Theoretical | Should work via native web API, but untested. |
-| Speedport Entry / Entry 2 / Entry 21 | ⚠️ Theoretical | Basic sensors should work, untested. |
-| Speedport Neo | ⚠️ Theoretical | Basic sensors should work, untested. |
-| Speedport W 723V / W 921V / W 922V | ⚠️ Theoretical | Basic sensors should work, untested. |
-
-## ✨ Features
-
-- **Real-time Monitoring**:
-  - Track **Online Status**, **Public IP (IPv4/IPv6)**, and **DSL Sync speeds**.
-  - Monitor live **Internet Throughput** (Download/Upload rates).
-  - Track the number of **Connected Devices**.
-- **WiFi Management**:
-  - Toggle **Main WiFi** and **Guest WiFi** via switches.
-  - View **SSIDs** for 2.4 GHz, 5 GHz, and Guest networks.
-  - Trigger **WPS Pairing** via a button.
-  - Generate **Wi-Fi QR Codes** to easily share the main or guest network.
-- **Router Control**:
-  - **Reboot** the router directly from HA.
-  - Trigger an **Internet Reconnect** to get a new IP address.
-- **Device Tracking**:
-  - Automatically discovers and tracks all devices connected to the router.
-  - Provides reliable presence detection for your home network.
-- **Native Experience**:
-  - **Full Localization**: English and German translations included.
-  - **Visit Button**: Direct link to your router's web interface from the device page.
-  - **Firmware & Model**: Accurate display of your router's hardware model and current firmware version.
-
-## 📦 Installation
-
-### HACS (Recommended)
-
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=FaserF&repository=ha-speedport&category=integration)
-
-1. Open HACS in Home Assistant.
-2. Click on the three dots in the top right corner and select **Custom repositories**.
-3. Add `https://github.com/FaserF/ha-speedport` with category **Integration**.
-4. Search for "Speedport".
-5. Install and restart Home Assistant.
-
-### Manual Installation
-
-1. Download the latest release from the [Releases page](https://github.com/FaserF/ha-speedport/releases).
-2. Extract the `custom_components/speedport` folder into your Home Assistant's `custom_components` directory.
+1. Add `https://github.com/stevenrudolphcom/telekom-devices` as a custom
+   HACS repository in the **Integration** category.
+2. Install **Telekom Devices / Speedport**.
 3. Restart Home Assistant.
+4. Add the **Telekom Speedport** integration and enter the router address and
+   password.
 
-## ⚙️ Configuration
+Only one integration with the Home Assistant domain `speedport` may be
+installed. Remove or back up an existing Speedport custom integration first.
 
-1. Navigate to **Settings > Devices & Services** in Home Assistant.
-2. Click **Add Integration** and search for **Telekom Speedport**.
-3. Enter your router's **IP Address** (usually `192.168.2.1` or `speedport.ip`) and your **Router Password**.
+## Manual installation
 
-## 🛠️ Options
+Copy [`custom_components/speedport`](custom_components/speedport) to
+`/config/custom_components/speedport`, restart Home Assistant, and add the
+integration from **Settings > Devices & Services**.
 
-Click **Configure** on the integration page to adjust the **Update Interval** (default: 60 seconds), enable/disable device tracking, or configure the logout behavior.
+## Speedport Pro Plus and XMO
 
-## ⚠️ Troubleshooting & Known Limitations
+The connector detects the verified Pro Plus GUI fingerprint before selecting
+XMO. Authentication uses the router's SHA-512 challenge-response flow with
+temporary session tokens. The password remains in the Home Assistant backend
+and is never required by the frontend card.
 
-### Telekom Zuhause App — "The device list could not be loaded"
-Speedport routers typically enforce a single active session lock. Because Home Assistant periodically polls the router's API to fetch updates, keeping the session open continuously blocks background administration synchronization (like TR-069 / EasySupport) that the Telekom cloud uses to query the router. As a result, the **Telekom Zuhause app** eventually fails to show connected devices and displays:
-> *"The device list could not be loaded. Please try again."*
+The following controls are currently unavailable through XMO and return an
+explicit error:
 
-**Solution/Workaround:**
-1. Navigate to **Settings > Devices & Services** in Home Assistant.
-2. Find the **Telekom Speedport** integration and click **Configure**.
-3. Check the option **Log out after each fetch (prevents Telekom Zuhause App lockout)**.
+- Wi-Fi switching
+- Guest Wi-Fi switching
+- Internet reconnect
+- WPS
+- Firmware installation
 
-This will log out the integration at the end of each update cycle, releasing the session lock and allowing the Telekom Zuhause app to query the router normally. Note that this adds a small amount of network overhead for the integration, as it must log in on every poll.
+Reboot support is implemented but still requires a deliberate real-device test.
 
-## 🧱 Entities
+## Optional router flyout
 
-The integration provides the following entities (depending on your router model):
+1. Copy the files in [`www`](www) to `/config/www`.
+2. Add `/local/router-flyout-card.js?v=1` as a **JavaScript module** Lovelace
+   resource.
+3. Import or adapt [`examples/dashboard.yaml`](examples/dashboard.yaml).
+4. Replace the example entity IDs with the IDs from your Home Assistant.
 
-| Platform | Entity | Description |
-| :--- | :--- | :--- |
-| **Sensor** | Router State | Current state of the router system. |
-| **Sensor** | Online Status | Detailed connectivity status. |
-| **Sensor** | Public IPv4/v6 | Your external IP addresses. |
-| **Sensor** | DSL Up/Down | Synchronized DSL speeds. |
-| **Sensor** | Internet Up/Down | Real-time traffic throughput. |
-| **Sensor** | Internet Uptime | When the current session started. |
-| **Sensor** | DSL PoP | The DSL access point (Point of Presence). |
-| **Binary Sensor** | Internet Connection | Overall connectivity status. |
-| **Binary Sensor** | DSL Link / WiFi | State of the physical link and radios. |
-| **Switch** | WiFi / Guest WiFi | Control your wireless networks. |
-| **Button** | Reboot / Reconnect | Remote management controls. |
-| **Button** | WPS Pairing | Trigger WPS connection process. |
-| **Update** | Firmware Update | Monitor and install router updates. |
-| **Image** | Wi-Fi QR Code | Dynamically generated QR codes to join Wi-Fi. |
-| **Device Tracker** | [Device Name] | Presence tracking for all network clients. |
+The card calls `button.press` and then reads `speedport.get_raw_data` through
+the Home Assistant WebSocket API. It does not contact the router directly.
 
-## 🧑‍💻 Development
+See [architecture](docs/ARCHITECTURE.md) and
+[current testing status](docs/STATUS.md).
 
-This project uses modern Python development tools:
-- `ruff` for linting and formatting
-- `mypy` for static typing
-- `pytest` for unit testing
+## Troubleshooting
 
-### Setup
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements_test.txt
+Speedport routers can enforce a single active administration session. If the
+Telekom Zuhause app reports that its device list cannot be loaded, enable
+**Log out after each fetch** in the integration options. This releases the
+router session after polling but increases network overhead.
+
+For Pro Plus:
+
+- Use a trusted local network.
+- Confirm that the router GUI at `/6.5/gui/` is reachable.
+- Do not expose the router management interface to the internet.
+- Review diagnostics before sharing them because they can contain network
+  details.
+
+## Development
+
+```powershell
+uv sync --extra test
+uv run python -m pytest tests
+uv run python -m compileall -q custom_components
+npm ci
+npm test
 ```
 
-## 📄 License
+Python mock tests do not replace installation and authentication tests on a
+real Home Assistant system and router.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Origin, license, and trademark
+
+This repository is a maintained fork of
+[FaserF/ha-speedport](https://github.com/FaserF/ha-speedport). The original
+attribution and MIT license are preserved in [LICENSE](LICENSE).
+
+Telekom and Speedport are trademarks of their respective owners. They are used
+only to identify compatibility.
